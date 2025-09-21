@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artisans - Handcrafted Goods</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        /* Simple spinner animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4f46e5; /* indigo */
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for active nav link */
+        .nav-link-active {
+            color: #4f46e5;
+            border-bottom: 2px solid #4f46e5;
+        }
+        .artist-card-link {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header & Navigation Section (Initially Hidden) -->
+    <header id="app-header" class="bg-white shadow-sm sticky top-0 z-10 hidden">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                 <h1 class="text-3xl font-bold text-gray-900">Artisans</h1>
+                 <nav class="flex space-x-6 text-lg items-center">
+                    <button id="nav-products" class="font-semibold text-gray-600 hover:text-indigo-600 transition-colors nav-link-active pb-1">Products</button>
+                    <button id="nav-artists" class="font-semibold text-gray-600 hover:text-indigo-600 transition-colors pb-1">Artists</button>
+                    <button id="nav-add-product" class="font-semibold text-gray-600 hover:text-indigo-600 transition-colors pb-1">Add Product</button>
+                    <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm">Logout</button>
+                 </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- App content container -->
+    <div id="app-content">
+
+        <!-- === LOGIN PAGE === -->
+        <main id="login-page" class="container mx-auto px-6 py-12 flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Welcome Back</h1>
+                <p class="text-center text-gray-500 mb-8">Login to continue to Artisans.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-gray-700 font-semibold">Email</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-gray-700 font-semibold">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-75">Login</button>
+                    <p id="login-error" class="text-red-500 text-sm text-center"></p>
+                </div>
+                <p class="text-center text-gray-500 mt-6">
+                    Don't have an account? <button id="go-to-register" class="font-semibold text-indigo-600 hover:underline">Sign up</button>
+                </p>
+            </div>
+        </main>
+
+        <!-- === REGISTRATION PAGE === -->
+        <main id="register-page" class="hidden container mx-auto px-6 py-12 flex items-center justify-center min-h-screen">
+             <div class="bg-white rounded-xl shadow-lg p-8 max-w-lg w-full">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Create Your Account</h1>
+                <p class="text-center text-gray-500 mb-8">Join our community of artists and art lovers.</p>
+                <div class="space-y-4">
+                     <div>
+                        <label for="register-name" class="block text-gray-700 font-semibold">Full Name</label>
+                        <input type="text" id="register-name" placeholder="Enter your name" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <div>
+                        <label for="register-email" class="block text-gray-700 font-semibold">Email</label>
+                        <input type="email" id="register-email" placeholder="you@example.com" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <div>
+                        <label for="register-password" class="block text-gray-700 font-semibold">Password</label>
+                        <input type="password" id="register-password" placeholder="Create a strong password" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <!-- Artist Specific Fields -->
+                    <div id="artist-fields" class="space-y-4 pt-4 border-t">
+                         <h3 class="font-semibold text-lg text-gray-700">For Artists</h3>
+                         <div>
+                            <label for="artist-artwork" class="block text-gray-700 font-semibold">Upload Your Best Artwork</label>
+                            <input type="file" id="artist-artwork" accept="image/*" class="mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        </div>
+                        <button id="generate-bio-btn" class="w-full bg-teal-600 text-white font-bold py-2 rounded-lg shadow-md hover:bg-teal-700" disabled>Generate Bio from Artwork</button>
+                        <div>
+                            <label for="artist-bio" class="block text-gray-700 font-semibold">Your Bio</label>
+                             <textarea id="artist-bio" rows="4" placeholder="Your artist biography will appear here..." class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm"></textarea>
+                        </div>
+                    </div>
+                    <button id="register-btn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-indigo-700">Create Account</button>
+                    <p id="register-error" class="text-red-500 text-sm text-center"></p>
+                </div>
+                 <p class="text-center text-gray-500 mt-6">
+                    Already have an account? <button id="go-to-login" class="font-semibold text-indigo-600 hover:underline">Log in</button>
+                </p>
+             </div>
+        </main>
+
+        <!-- === PRODUCT BROWSER PAGE === -->
+        <main id="products-page" class="hidden container mx-auto px-6 py-12">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">Our Collection</h2>
+                <p class="text-gray-600 mt-2">Discover Unique Handcrafted Products from our Talented Artists</p>
+            </div>
+            <!-- Grid container for all products -->
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Product cards will be dynamically inserted here -->
+            </div>
+        </main>
+
+        <!-- === ARTISTS PAGE === -->
+        <main id="artists-page" class="hidden container mx-auto px-6 py-12">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">Meet Our Artists</h2>
+                <p class="text-gray-600 mt-2">The creative minds behind the beautiful work.</p>
+            </div>
+            <!-- Grid container for all artists -->
+            <div id="artist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Artist cards will be dynamically inserted here -->
+            </div>
+        </main>
+
+        <!-- === ARTIST DETAIL PAGE (NEW) === -->
+        <main id="artist-detail-page" class="hidden container mx-auto px-6 py-12">
+            <div class="mb-8">
+                 <button id="back-to-products-btn" class="text-indigo-600 hover:underline font-semibold">&larr; Back to Products</button>
+            </div>
+            <div id="artist-detail-content" class="bg-white rounded-xl shadow-lg p-8">
+                <h2 id="detail-artist-name" class="text-4xl font-bold text-gray-800 mb-4">Artist Name</h2>
+                <p id="detail-artist-bio" class="text-gray-700 leading-relaxed mb-10 border-b pb-8">Artist bio...</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Products by this Artist</h3>
+                <div id="artist-detail-product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Products by the specific artist will be inserted here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- === ADD PRODUCT PAGE === -->
+        <main id="add-product-page" class="hidden container mx-auto px-6 py-12">
+             <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 max-w-2xl mx-auto">
+                <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-2">Add Your Product</h1>
+                <p class="text-center text-gray-500 mb-8">Let AI help you craft the perfect listing.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold">Artist Name</label>
+                        <p id="display-artist-name" class="mt-2 w-full p-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-600"></p>
+                    </div>
+                    <div>
+                        <label for="add-product-name" class="block text-gray-700 font-semibold">Product Name</label>
+                        <input type="text" id="add-product-name" placeholder="e.g., Hand-Thrown Ceramic Vase" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                     <div>
+                        <label for="add-product-image" class="block text-gray-700 font-semibold">Upload Product Image (for AI Description)</label>
+                        <input type="file" id="add-product-image" accept="image/*" class="mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    </div>
+                     <div>
+                        <label for="add-image-url" class="block text-gray-700 font-semibold">Public Image URL (to save)</label>
+                        <input type="text" id="add-image-url" placeholder="https://example.com/your-product.jpg" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm">
+                    </div>
+                    <button id="generate-desc-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-teal-700" disabled>Generate Description</button>
+                    
+                    <div id="description-section" class="hidden space-y-4 pt-4 border-t">
+                        <label for="ai-product-description" class="block text-gray-700 font-semibold">AI-Generated Description</label>
+                        <textarea id="ai-product-description" rows="5" class="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-gray-50"></textarea>
+                        <div class="flex space-x-4">
+                             <button id="regenerate-desc-btn" class="w-full bg-gray-600 text-white font-bold py-2 rounded-lg shadow-md hover:bg-gray-700">Regenerate</button>
+                             <button id="save-product-btn" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg shadow-md hover:bg-indigo-700">Save Product</button>
+                        </div>
+                    </div>
+                    <p id="add-product-feedback" class="text-center text-sm pt-2"></p>
+                </div>
+             </div>
+        </main>
+    </div>
+    
+    <!-- Footer Section -->
+    <footer class="bg-white py-6 border-t">
+        <div class="container mx-auto px-6 text-center text-gray-500">
+            <p>&copy; 2024 Artisans. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, getDoc, setLogLevel, enableIndexedDbPersistence, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            let db, auth;
+            let currentArtistName = '';
+            const geminiApiKey = "AIzaSyDheDDGwx2fL5ltQxlNhtmuRC3Rh5ppZ9s";
+
+            // --- Page Elements ---
+            const appHeader = document.getElementById('app-header');
+            const loginPage = document.getElementById('login-page');
+            const registerPage = document.getElementById('register-page');
+            const productsPage = document.getElementById('products-page');
+            const artistsPage = document.getElementById('artists-page');
+            const addProductPage = document.getElementById('add-product-page');
+            const artistDetailPage = document.getElementById('artist-detail-page'); // New page
+            const feedbackEl = document.getElementById('add-product-feedback');
+            const mainContentContainer = document.getElementById('app-content');
+
+            const allPages = [loginPage, registerPage, productsPage, artistsPage, addProductPage, artistDetailPage];
+
+            // --- Firebase Initialization ---
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAbOHedRGIOLbDVSpkEtMQeWKdAIIeICxo",
+                    authDomain: "artisans-p.firebaseapp.com",
+                    projectId: "artisans-p",
+                    storageBucket: "artisans-p.appspot.com",
+                    messagingSenderId: "834152227800",
+                    appId: "1:834152227800:web:988bb3eb1f67e3564548ad"
+                };
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                try {
+                    await enableIndexedDbPersistence(db);
+                } catch (err) {
+                    console.warn("Firestore persistence failed:", err.code);
+                }
+                
+                setLogLevel('debug');
+                
+                // --- Auth State Listener ---
+                onAuthStateChanged(auth, async user => {
+                    if (user) {
+                        await fetchArtistName(user.uid);
+                        showPage(productsPage); // Go to products page on login
+                        loadProductsFromFirestore();
+                        loadArtistsFromFirestore();
+                    } else {
+                        currentArtistName = '';
+                        showPage(loginPage, false); // Hide header on logout
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase Init Error:", error);
+                document.body.innerHTML = `<div class="text-center p-8 text-red-500">Could not initialize the application. Please check console.</div>`;
+            }
+
+            async function fetchArtistName(uid) {
+                try {
+                    const userDocRef = doc(db, 'users', uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if(userDoc.exists()) {
+                        currentArtistName = userDoc.data().name;
+                        document.getElementById('display-artist-name').textContent = currentArtistName;
+                    }
+                } catch (error) {
+                     console.error("Failed to fetch artist name:", error);
+                }
+            }
+            
+            // --- UI State Management & Navigation ---
+            function showPage(pageToShow, showHeader = true) {
+                allPages.forEach(page => page.classList.add('hidden'));
+                if (pageToShow) {
+                    pageToShow.classList.remove('hidden');
+                }
+                if (showHeader) {
+                    appHeader.classList.remove('hidden');
+                } else {
+                    appHeader.classList.add('hidden');
+                }
+            }
+            
+            document.getElementById('go-to-register').addEventListener('click', () => showPage(registerPage, false));
+            document.getElementById('go-to-login').addEventListener('click', () => showPage(loginPage, false));
+            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+            document.getElementById('back-to-products-btn').addEventListener('click', () => showPage(productsPage));
+            
+            const navLinks = {
+                'nav-products': productsPage,
+                'nav-artists': artistsPage,
+                'nav-add-product': addProductPage
+            };
+            Object.keys(navLinks).forEach(navId => {
+                document.getElementById(navId).addEventListener('click', () => {
+                    showPage(navLinks[navId]);
+                    Object.keys(navLinks).forEach(id => document.getElementById(id).classList.remove('nav-link-active'));
+                    document.getElementById(navId).classList.add('nav-link-active');
+                    if (navId === 'nav-add-product') {
+                        document.getElementById('display-artist-name').textContent = currentArtistName || 'Loading...';
+                    }
+                });
+            });
+
+
+            // --- Authentication Logic ---
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.addEventListener('click', async () => {
+                const loginEmail = document.getElementById('login-email').value;
+                const loginPassword = document.getElementById('login-password').value;
+                const loginError = document.getElementById('login-error');
+                loginError.textContent = '';
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Logging in...';
+                
+                try {
+                    await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+                } catch (error) {
+                    loginError.textContent = error.message;
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                }
+            });
+
+            const registerBtn = document.getElementById('register-btn');
+            registerBtn.addEventListener('click', async () => {
+                const registerName = document.getElementById('register-name').value;
+                const registerEmail = document.getElementById('register-email').value;
+                const registerPassword = document.getElementById('register-password').value;
+                const artistBio = document.getElementById('artist-bio').value;
+                const registerError = document.getElementById('register-error');
+                registerError.textContent = '';
+                registerBtn.disabled = true;
+                registerBtn.textContent = 'Creating Account...';
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+                    const user = userCredential.user;
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: registerName,
+                        email: user.email,
+                        role: 'artist',
+                        bio: artistBio
+                    });
+                } catch (error) {
+                    registerError.textContent = error.message;
+                } finally {
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = 'Create Account';
+                }
+            });
+
+            const generateBioBtn = document.getElementById('generate-bio-btn');
+            const artistArtworkInput = document.getElementById('artist-artwork');
+            artistArtworkInput.addEventListener('change', (e) => {
+                generateBioBtn.disabled = !e.target.files[0];
+            });
+            generateBioBtn.addEventListener('click', async () => {
+                const imageFile = artistArtworkInput.files[0];
+                if (!imageFile) return;
+
+                generateBioBtn.disabled = true;
+                generateBioBtn.textContent = 'Generating...';
+                const artistBioTextarea = document.getElementById('artist-bio');
+                artistBioTextarea.value = 'Generating...';
+
+                try {
+                    const base64ImageData = await toBase64(imageFile);
+                    const prompt = "Based on this artwork, write a short, inspiring one-paragraph biography for the artist who created it. Speak in the first person, as if you are the artist. Touch on your passion and what drives you to create.";
+                    const bioText = await callGeminiWithImage(prompt, base64ImageData, imageFile.type);
+                    
+                    if (bioText) {
+                        artistBioTextarea.value = bioText;
+                    } else {
+                         artistBioTextarea.value = "Could not generate a bio. Please try again.";
+                    }
+                } catch (error) {
+                    artistBioTextarea.value = `Error: ${error.message}`;
+                } finally {
+                    generateBioBtn.disabled = false;
+                    generateBioBtn.textContent = 'Generate Bio from Artwork';
+                }
+            });
+            
+            // --- PRODUCT BROWSER LOGIC ---
+            function loadProductsFromFirestore() {
+                const productGrid = document.getElementById('product-grid');
+                const q = query(collection(db, 'products'), orderBy("createdAt", "desc"));
+                onSnapshot(q, (snapshot) => {
+                    productGrid.innerHTML = snapshot.empty ? `<p class="text-center text-gray-500 col-span-full">The collection is empty.</p>` : '';
+                    snapshot.forEach(doc => {
+                        const product = doc.data();
+                        productGrid.innerHTML += `
+                            <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition-transform duration-300 hover:scale-105">
+                                <img src="${product.imageUrl}" alt="${product.productName}" class="w-full h-56 object-cover" onerror="this.src='https://placehold.co/600x400/e2e8f0/e2e8f0?text=Image+Not+Found'">
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">${product.productName}</h3>
+                                    <p class="text-gray-700 text-sm mb-4 flex-grow">${product.description}</p>
+                                    <div class="text-gray-500 text-xs italic mt-auto pt-4 border-t">By: 
+                                        <button class="artist-link text-indigo-600 hover:underline" data-artist-id="${product.artistId}">${product.artistName}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+            }
+
+            // --- ARTIST BROWSER LOGIC ---
+            function loadArtistsFromFirestore() {
+                const artistGrid = document.getElementById('artist-grid');
+                const q = query(collection(db, 'users'), where("role", "==", "artist"));
+                onSnapshot(q, (snapshot) => {
+                    artistGrid.innerHTML = snapshot.empty ? `<p class="text-center text-gray-500 col-span-full">No artists have registered yet.</p>` : '';
+                    snapshot.forEach(doc => {
+                        const artist = doc.data();
+                        artistGrid.innerHTML += `
+                            <div class="artist-card-link bg-white rounded-lg shadow-lg p-6 flex flex-col transition-transform duration-300 hover:scale-105" data-artist-id="${doc.id}">
+                                <h3 class="text-xl font-bold text-gray-900 text-center">${artist.name}</h3>
+                            </div>
+                        `;
+                    });
+                });
+            }
+
+            // --- ARTIST DETAIL PAGE LOGIC (NEW) ---
+            async function showArtistDetailPage(artistId) {
+                showPage(artistDetailPage);
+                const nameEl = document.getElementById('detail-artist-name');
+                const bioEl = document.getElementById('detail-artist-bio');
+                const productGridEl = document.getElementById('artist-detail-product-grid');
+                
+                nameEl.textContent = 'Loading Artist...';
+                bioEl.textContent = '';
+                productGridEl.innerHTML = '';
+
+                // 1. Fetch artist details
+                const userDocRef = doc(db, 'users', artistId);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const artist = userDoc.data();
+                    nameEl.textContent = artist.name;
+                    bioEl.textContent = artist.bio || 'No bio provided.';
+                } else {
+                    nameEl.textContent = 'Artist not found.';
+                    return;
+                }
+
+                // 2. Fetch artist's products
+                const productQuery = query(collection(db, 'products'), where("artistId", "==", artistId), orderBy("createdAt", "desc"));
+                
+                onSnapshot(productQuery, (snapshot) => {
+                    productGridEl.innerHTML = snapshot.empty ? `<p class="text-center text-gray-500 col-span-full">This artist has not added any products yet.</p>` : '';
+                    snapshot.forEach(doc => {
+                        const product = doc.data();
+                        productGridEl.innerHTML += `
+                            <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden flex flex-col">
+                                <img src="${product.imageUrl}" alt="${product.productName}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/600x400/e2e8f0/e2e8f0?text=Image+Not+Found'">
+                                <div class="p-4">
+                                    <h3 class="font-bold text-gray-800">${product.productName}</h3>
+                                    <p class="text-gray-600 text-sm mt-1">${product.description}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+            }
+            
+            // --- EVENT DELEGATION FOR DYNAMIC CONTENT ---
+            mainContentContainer.addEventListener('click', (e) => {
+                const artistLink = e.target.closest('.artist-link');
+                const artistCardLink = e.target.closest('.artist-card-link');
+
+                if (artistLink) {
+                    const artistId = artistLink.dataset.artistId;
+                    if (artistId) showArtistDetailPage(artistId);
+                } else if (artistCardLink) {
+                    const artistId = artistCardLink.dataset.artistId;
+                    if (artistId) showArtistDetailPage(artistId);
+                }
+            });
+
+            // --- ADD PRODUCT LOGIC ---
+            const productNameInput = document.getElementById('add-product-name');
+            const productImageInput = document.getElementById('add-product-image');
+            const imageUrlInput = document.getElementById('add-image-url');
+            const generateDescBtn = document.getElementById('generate-desc-btn');
+            const descriptionSection = document.getElementById('description-section');
+            const aiDescriptionTextarea = document.getElementById('ai-product-description');
+            const regenerateDescBtn = document.getElementById('regenerate-desc-btn');
+            const saveProductBtn = document.getElementById('save-product-btn');
+            
+            function checkFormValidity() {
+                generateDescBtn.disabled = !(productNameInput.value.trim() && productImageInput.files[0]);
+            }
+            productNameInput.addEventListener('input', checkFormValidity);
+            productImageInput.addEventListener('change', checkFormValidity);
+
+            const handleDescriptionGeneration = async () => {
+                const imageFile = productImageInput.files[0];
+                if (!imageFile) return;
+
+                feedbackEl.textContent = '';
+                generateDescBtn.disabled = true;
+                generateDescBtn.textContent = 'Generating...';
+                regenerateDescBtn.disabled = true;
+
+                try {
+                    const base64ImageData = await toBase64(imageFile);
+                    const prompt = "Write a compelling and professional e-commerce product description for this handcrafted item. Focus on its potential use, the craftsmanship, and the overall aesthetic. Keep it to 2-3 sentences.";
+                    const descriptionText = await callGeminiWithImage(prompt, base64ImageData, imageFile.type);
+
+                    if (descriptionText) {
+                        aiDescriptionTextarea.value = descriptionText;
+                        descriptionSection.classList.remove('hidden');
+                    } else {
+                        feedbackEl.textContent = "Could not generate a description. Please try again.";
+                        feedbackEl.className = "text-red-500 text-center text-sm pt-2";
+                    }
+                } catch (error) {
+                    feedbackEl.textContent = `Error: ${error.message}`;
+                    feedbackEl.className = "text-red-500 text-center text-sm pt-2";
+                } finally {
+                    generateDescBtn.disabled = false;
+                    generateDescBtn.textContent = 'Generate Description';
+                    regenerateDescBtn.disabled = false;
+                }
+             };
+            generateDescBtn.addEventListener('click', handleDescriptionGeneration);
+            regenerateDescBtn.addEventListener('click', handleDescriptionGeneration);
+
+            saveProductBtn.addEventListener('click', async () => {
+                const user = auth.currentUser;
+                const productName = productNameInput.value.trim();
+                const description = aiDescriptionTextarea.value.trim();
+                const imageUrl = imageUrlInput.value.trim();
+                
+                if (!user) {
+                    feedbackEl.textContent = "You must be logged in to save a product.";
+                    return;
+                }
+                
+                if (!currentArtistName) {
+                    feedbackEl.textContent = "Artist details still loading, please wait a moment and try again.";
+                    feedbackEl.className = "text-yellow-600 text-center text-sm pt-2";
+                    return;
+                }
+
+                if (!productName || !description || !imageUrl) {
+                    feedbackEl.textContent = "Please ensure product name, description, and image URL are complete.";
+                    feedbackEl.className = "text-red-500 text-center text-sm pt-2";
+                    return;
+                }
+
+                 try { new URL(imageUrl); } 
+                 catch (_) {
+                    feedbackEl.textContent = "Please enter a valid Image URL.";
+                    feedbackEl.className = "text-red-500 text-center text-sm pt-2";
+                    return;
+                 }
+
+                saveProductBtn.disabled = true;
+                regenerateDescBtn.disabled = true;
+                saveProductBtn.textContent = 'Saving...';
+                feedbackEl.textContent = '';
+
+                const productData = {
+                    artistId: user.uid,
+                    artistName: currentArtistName,
+                    productName: productName,
+                    description: description,
+                    imageUrl: imageUrl,
+                    createdAt: new Date()
+                };
+
+                try {
+                    await addDoc(collection(db, 'products'), productData);
+                    feedbackEl.textContent = "Product added successfully! The form will reset shortly.";
+                    feedbackEl.className = "text-green-500 text-center text-sm pt-2";
+                    
+                    setTimeout(() => {
+                        productNameInput.value = '';
+                        productImageInput.value = '';
+                        imageUrlInput.value = '';
+                        descriptionSection.classList.add('hidden');
+                        aiDescriptionTextarea.value = '';
+                        feedbackEl.textContent = '';
+                        checkFormValidity();
+                        saveProductBtn.disabled = false;
+                        regenerateDescBtn.disabled = false;
+                        saveProductBtn.textContent = 'Save Product';
+                    }, 2500);
+
+                } catch (error) {
+                    feedbackEl.textContent = `Database error: ${error.message}`;
+                    feedbackEl.className = "text-red-500 text-center text-sm pt-2";
+                    saveProductBtn.disabled = false;
+                    regenerateDescBtn.disabled = false;
+                    saveProductBtn.textContent = 'Save Product';
+                }
+            });
+
+
+            // --- Helper Functions ---
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+
+             async function callGeminiWithImage(prompt, imageData, mimeType) {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
+                const payload = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType, data: imageData } }] }] };
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API returned ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (error) {
+                     console.error("Gemini API call failed:", error);
+                     return null;
+                }
+             }
+        });
+    </script>
+</body>
+</html>
+
