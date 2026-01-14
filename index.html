@@ -234,10 +234,12 @@
                 const firebaseConfig = {
                     apiKey: "AIzaSyAbOHedRGIOLbDVSpkEtMQeWKdAIIeICxo",
                     authDomain: "artisans-p.firebaseapp.com",
+                    databaseURL: "https://artisans-p-default-rtdb.firebaseio.com",
                     projectId: "artisans-p",
                     storageBucket: "artisans-p.firebasestorage.app",
                     messagingSenderId: "834152227800",
-                    appId: "1:834152227800:web:988bb3eb1f67e3564548ad"
+                    appId: "1:834152227800:web:988bb3eb1f67e3564548ad",
+                    measurementId: "G-MCKDKN4302"
                 };
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
@@ -641,6 +643,7 @@
     </script>
 </body>
 </html>
+
 
 
 
